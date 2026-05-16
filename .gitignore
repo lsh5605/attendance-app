@@ -1,0 +1,23 @@
+# === 비밀 키 — 절대 커밋 금지 ===
+attendance-server/firebase/*-firebase-adminsdk-*.json
+
+# === Node.js ===
+node_modules/
+npm-debug.log*
+
+# === Android ===
+*.iml
+.gradle/
+build/
+.kotlin/
+.cxx/
+.externalNativeBuild/
+captures/
+local.properties
+
+# === IDE ===
+.idea/
+.DS_Store
+
+# === Claude Code ===
+.claude/settings.local.json
