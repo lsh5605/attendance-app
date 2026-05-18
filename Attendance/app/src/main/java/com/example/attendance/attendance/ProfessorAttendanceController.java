@@ -242,7 +242,7 @@ public class ProfessorAttendanceController {
     private void startRangingLoopIfActive() {
         if (stopped || paused) return;
         if (rangingFuture != null && !rangingFuture.isDone()) return;
-        rangingFuture = scheduler.scheduleAtFixedRate(
+        rangingFuture = scheduler.scheduleWithFixedDelay(
                 this::runRangingCycle, 0, RANGING_PERIOD_MINUTES, TimeUnit.MINUTES);
     }
 
@@ -258,9 +258,9 @@ public class ProfessorAttendanceController {
         long msUntilPause  = millisUntilNextMinuteOfHour(BREAK_START_MINUTE);
         long msUntilResume = millisUntilNextMinuteOfHour(BREAK_END_MINUTE);
 
-        scheduler.scheduleAtFixedRate(this::pauseRanging,
+        scheduler.scheduleWithFixedDelay(this::pauseRanging,
                 msUntilPause, oneHourMs, TimeUnit.MILLISECONDS);
-        scheduler.scheduleAtFixedRate(this::resumeRanging,
+        scheduler.scheduleWithFixedDelay(this::resumeRanging,
                 msUntilResume, oneHourMs, TimeUnit.MILLISECONDS);
 
         int currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
