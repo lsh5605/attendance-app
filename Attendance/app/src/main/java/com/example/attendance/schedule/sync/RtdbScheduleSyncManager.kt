@@ -161,6 +161,6 @@ class RtdbScheduleSyncManager(
          * 추천 지역은 asia-northeast3 (서울) — 한국 사용자 latency 최소.
          */
         private const val RTDB_URL =
-            "https://mobile-cb29c-default-rtdb.asia-northeast3.firebasedatabase.app/"
+            "https://mobile-cb29c-default-rtdb.asia-southeast1.firebasedatabase.app/"
     }
 }
