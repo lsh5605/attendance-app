@@ -19,6 +19,7 @@ import androidx.core.app.NotificationCompat;
 import com.example.attendance.R;
 import com.example.attendance.attendance.AttendanceController;
 import com.example.attendance.network.CheckInData;
+import com.example.attendance.schedule.notification.AttendanceWarningNotifier;
 
 /**
  * 학생 BLE 스캔 + 출석 등록을 호스팅하는 Foreground Service.
@@ -165,10 +166,14 @@ public class StudentAttendanceService extends Service {
             @Override
             public void onAbsent(String attendanceId) {
                 Log.w(TAG, "ABSENT 전이 — Service 종료");
+                // 1) MainActivity2(foreground)용 broadcast — Toast 표시
                 Intent i = new Intent(AttendanceEvents.ACTION_ATTENDANCE_ABSENT)
                         .setPackage(getPackageName())
                         .putExtra(AttendanceEvents.EXTRA_ATTENDANCE_ID, attendanceId);
                 sendBroadcast(i);
+                // 2) heads-up 푸시 알림 — 앱이 background여도 사용자에게 강하게 통보
+                AttendanceWarningNotifier.notifyAbsent(getApplicationContext(), attendanceId);
+                // 3) Service 정리 (정책: ABSENT는 비가역 종료)
                 if (controller != null) controller.stop();
                 stopSelf();
             }
