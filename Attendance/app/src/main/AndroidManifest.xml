@@ -33,6 +33,14 @@
         android:required="false" />
     <uses-permission android:name="android.permission.UWB_RANGING" />
 
+    <!-- 수업 시작 5분 전 알림 (Stage 4) -->
+    <!-- Android 12+ 정확 알람. SCHEDULE_EXACT_ALARM은 사용자가 Settings에서 허용,
+         USE_EXACT_ALARM은 Android 13+ 알람/캘린더 앱용 자동 부여 시도. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- 재부팅 후 시간표 알람 자동 재등록 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -67,6 +75,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 수업 시작 5분 전 알림 (Stage 4) -->
+        <!-- ScheduleAlarmManager의 AlarmManager 알람을 수신.
+             앱 내부에서만 trigger되므로 exported=false. -->
+        <receiver
+            android:name=".schedule.receiver.ClassReminderReceiver"
+            android:exported="false" />
+
+        <!-- 부팅 후 시간표 알람 재등록 (Stage 4) -->
+        <!-- BOOT_COMPLETED는 시스템이 보내는 broadcast이므로 exported=true. -->
+        <receiver
+            android:name=".schedule.receiver.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -12,6 +12,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.example.attendance.schedule.alarm.ScheduleAlarmManager
 import com.example.attendance.schedule.data.ScheduleDatabase
 import com.example.attendance.schedule.sync.MockScheduleSyncManager
 import com.example.attendance.schedule.sync.ScheduleSyncManager
@@ -47,7 +48,12 @@ class ScheduleSyncWorker(
             val dao = ScheduleDatabase.getInstance(applicationContext).scheduleDao()
             val syncer: ScheduleSyncManager = MockScheduleSyncManager(dao)
             val count = syncer.sync(studentId)
-            Log.d(TAG, "동기화 성공: $count 개 row, studentId=$studentId")
+
+            // sync 직후 알람 재예약 (Stage 4: 수업 5분 전 알림)
+            val schedules = dao.getAll()
+            ScheduleAlarmManager(applicationContext).rescheduleAll(schedules)
+
+            Log.d(TAG, "동기화 성공: $count row, 알람 ${schedules.size}개 재예약, studentId=$studentId")
             Result.success()
         } catch (e: Exception) {
             Log.e(TAG, "동기화 실패 (재시도 예정)", e)
