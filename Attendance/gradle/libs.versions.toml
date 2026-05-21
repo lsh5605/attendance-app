@@ -16,6 +16,7 @@ firebaseBom = "33.5.1"
 gms = "4.4.2"
 room = "2.6.1"
 ksp = "2.0.21-1.0.28"
+work = "2.9.1"
 
 [libraries]
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
@@ -35,6 +36,7 @@ firebase-database-ktx = { module = "com.google.firebase:firebase-database-ktx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
