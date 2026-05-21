@@ -12,6 +12,8 @@ socketio = "2.1.2"
 kotlin = "2.0.21"
 coroutines = "1.9.0"
 uwb = "1.0.0-alpha11"
+firebaseBom = "33.5.1"
+gms = "4.4.2"
 
 [libraries]
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
@@ -26,7 +28,10 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 socketio-client = { module = "io.socket:socket.io-client", version.ref = "socketio" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 androidx-core-uwb = { module = "androidx.core.uwb:uwb", version.ref = "uwb" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-database-ktx = { module = "com.google.firebase:firebase-database-ktx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "gms" }
 

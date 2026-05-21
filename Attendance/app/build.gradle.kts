@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -45,6 +46,11 @@ dependencies {
     implementation(libs.socketio.client)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.core.uwb)
+
+    // Firebase (Realtime Database for schedule sync; Firestore는 서버에서만 사용)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
