@@ -14,7 +14,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.example.attendance.schedule.alarm.ScheduleAlarmManager
 import com.example.attendance.schedule.data.ScheduleDatabase
-import com.example.attendance.schedule.sync.MockScheduleSyncManager
+import com.example.attendance.schedule.sync.RtdbScheduleSyncManager
 import com.example.attendance.schedule.sync.ScheduleSyncManager
 import java.util.concurrent.TimeUnit
 
@@ -46,7 +46,7 @@ class ScheduleSyncWorker(
 
         return try {
             val dao = ScheduleDatabase.getInstance(applicationContext).scheduleDao()
-            val syncer: ScheduleSyncManager = MockScheduleSyncManager(dao)
+            val syncer: ScheduleSyncManager = RtdbScheduleSyncManager(dao)
             val count = syncer.sync(studentId)
 
             // sync 직후 알람 재예약 (Stage 4: 수업 5분 전 알림)
