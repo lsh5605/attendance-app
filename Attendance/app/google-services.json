@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "865512090031",
+    "project_id": "mobile-cb29c",
+    "storage_bucket": "mobile-cb29c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:865512090031:android:c5234f2fbb23ade491a75a",
+        "android_client_info": {
+          "package_name": "com.example.attendance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1xizti9Hv0hXmnW76bqCRBMOUPYGKSq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
