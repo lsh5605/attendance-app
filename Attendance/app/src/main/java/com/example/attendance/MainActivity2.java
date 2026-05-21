@@ -20,6 +20,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.attendance.schedule.ui.ScheduleViewBinder;
+import com.example.attendance.schedule.ui.StudentPrefs;
+import com.example.attendance.schedule.work.ScheduleSyncWorker;
 import com.example.attendance.service.AttendanceEvents;
 import com.example.attendance.service.StudentAttendanceService;
 
@@ -37,8 +42,15 @@ public class MainActivity2 extends AppCompatActivity {
     private static final int REQ_NOTIFICATION_PERMS = 2;
     private static final int REQ_UWB_PERMS = 3;
 
-    // TODO: 로그인 붙으면 동적으로 주입
-    private static final String STUDENT_ID = "STU001";
+    // Phase 5 A 인증 도입 시 Firebase Auth UID로 교체. 그때까지 SharedPreferences 임시.
+    // 학번 미등록 시 fallback (테스트/데모 편의용).
+    private static final String DEFAULT_STUDENT_ID = "STU001";
+
+    /** 현재 사용할 학번. prefs에 저장된 값 우선, 없으면 fallback. */
+    private String currentStudentId() {
+        String saved = StudentPrefs.INSTANCE.getStudentId(this);
+        return saved != null ? saved : DEFAULT_STUDENT_ID;
+    }
 
     /** UWB 권한 요청 중 입력된 PIN을 보관 (권한 승인 후 재개용). */
     private String pendingPin;
@@ -83,6 +95,42 @@ public class MainActivity2 extends AppCompatActivity {
 
         requestNotificationPermissionIfNeeded();
 
+        // 학번 등록 UI ─────────────────────────────────────────
+        EditText studentIdInput = findViewById(R.id.studentIdInput);
+        Button saveStudentIdBtn = findViewById(R.id.saveStudentIdBtn);
+
+        // 기존 학번 채워넣기 (없으면 fallback 표시)
+        studentIdInput.setText(currentStudentId());
+
+        saveStudentIdBtn.setOnClickListener(v -> {
+            String id = studentIdInput.getText().toString().trim();
+            if (id.isEmpty()) {
+                Toast.makeText(this, "학번을 입력하세요", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            StudentPrefs.INSTANCE.setStudentId(this, id);
+            // 학번 저장과 함께 즉시 1회 동기화 + 12h 주기 등록
+            ScheduleSyncWorker.Companion.enqueueOnce(this, id);
+            ScheduleSyncWorker.Companion.enqueuePeriodic(this, id);
+            Toast.makeText(this, "학번 저장 완료: " + id, Toast.LENGTH_SHORT).show();
+        });
+
+        // "지금 동기화" 버튼 ─────────────────────────────────────
+        Button syncNowBtn = findViewById(R.id.syncNowBtn);
+        syncNowBtn.setOnClickListener(v ->
+            ScheduleSyncWorker.Companion.enqueueOnce(this, currentStudentId())
+        );
+
+        // 시간표 RecyclerView 부착 (Flow 자동 갱신) ──────────────
+        RecyclerView scheduleRecycler = findViewById(R.id.scheduleRecycler);
+        new ScheduleViewBinder(this, scheduleRecycler).attach();
+
+        // 학번이 prefs에 이미 있으면 앱 시작 시 12h 주기 등록 보장
+        if (StudentPrefs.INSTANCE.getStudentId(this) != null) {
+            ScheduleSyncWorker.Companion.enqueuePeriodic(this, currentStudentId());
+        }
+
+        // 기존 출석 UI ─────────────────────────────────────────
         Button scanBtn = findViewById(R.id.scanBtn);
         scanBtn.setOnClickListener(v -> {
             if (hasPermissions()) startStudentService();
@@ -157,7 +205,7 @@ public class MainActivity2 extends AppCompatActivity {
 
         Intent i = new Intent(this, StudentAttendanceService.class)
                 .setAction(StudentAttendanceService.ACTION_START)
-                .putExtra(StudentAttendanceService.EXTRA_STUDENT_ID, STUDENT_ID);
+                .putExtra(StudentAttendanceService.EXTRA_STUDENT_ID, currentStudentId());
         ContextCompat.startForegroundService(this, i);
     }
 
@@ -182,7 +230,7 @@ public class MainActivity2 extends AppCompatActivity {
 
         Intent i = new Intent(this, StudentAttendanceService.class)
                 .setAction(StudentAttendanceService.ACTION_SUBMIT_PIN)
-                .putExtra(StudentAttendanceService.EXTRA_STUDENT_ID, STUDENT_ID)
+                .putExtra(StudentAttendanceService.EXTRA_STUDENT_ID, currentStudentId())
                 .putExtra(StudentAttendanceService.EXTRA_PIN, pin);
         ContextCompat.startForegroundService(this, i);
     }
