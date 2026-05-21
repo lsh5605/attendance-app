@@ -64,6 +64,10 @@ dependencies {
     // WorkManager (시간표 12h 주기 동기화)
     implementation(libs.androidx.work.runtime.ktx)
 
+    // RecyclerView + Lifecycle (시간표 표시 UI)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
